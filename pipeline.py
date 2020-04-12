@@ -1,5 +1,4 @@
 from datetime import date
-from random import random
 
 from config import COUNTRIES_DATA, SUBMISSION_PATH, TIME_SERIES_CONFIRMED_DATA, TIME_SERIES_DEATHS_DATA
 from extractor.load import load_countries_codes, load_countries_time_series
@@ -10,21 +9,29 @@ import statsmodels.api as sm
 START_DATE = date(2020, 4, 5)
 END_DATE = date(2020, 12, 31)
 
-model  = sm.tsa.statespace.SARIMAX
-order = (5, 0, 2) # параметры для ARIMA
+model = sm.tsa.statespace.SARIMAX
+order = (1, 2, 1)  # параметры для ARIMA
 
 cases_predicts = {}
 death_predicts = {}
 
 
 def predict(model, order: tuple, time_series: list) -> list:
-
     start_step = len(time_series)
-    end_step = start_step + 100
-    model = model(time_series, order= order).fit(disp=-1)
+    end_step = start_step + 271
+    model = model(time_series, order=order).fit(disp=False)
     predicted = model.predict(start_step, end_step)[1:]
 
-    return predicted
+    return [int(round(elem)) for elem in predicted]
+
+
+def validation(model, order: tuple, time_series: list):
+    start_step = len(time_series)
+    end_step = start_step + 10
+    model = model(time_series, order=order).fit(disp=False)
+    predicted = model.predict(start_step, end_step)[1:]
+
+    return [int(round(elem)) for elem in predicted]
 
 
 confirmed_time_series = load_countries_time_series(TIME_SERIES_CONFIRMED_DATA, COUNTRIES_DATA)
