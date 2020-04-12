@@ -12,7 +12,8 @@ def iterate_over_dates(start: date, end: date) -> list:
 
 
 def save_predicts_to_csv(
-    country_predicts: dict,
+    cases_predicts: dict,
+    death_predicts: dict,
     path_to_save: str,
     start_date: date,
     end_date: date
@@ -23,6 +24,7 @@ def save_predicts_to_csv(
     data = pd.DataFrame()
     data['date'] = dates
     data['country'] = ['AFG']*3
-    data['prediction_confirmed'] = country_predicts['AFG']
+    data['prediction_confirmed'] = cases_predicts['AFG']
+    data['prediction_deaths'] = death_predicts['AFG']
 
     data.to_csv(path_to_save, index=False)
