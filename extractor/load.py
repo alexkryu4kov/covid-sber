@@ -1,5 +1,15 @@
 import pandas as pd
 
+unusual_countries = [
+    'Australia',
+    'Canada',
+    'China',
+    'Denmark',
+    'France',
+    'Netherlands',
+    'United Kingdom',
+]
+
 
 def load_countries_codes(countries_path: str) -> list:
     countries = pd.read_csv(countries_path)
@@ -23,5 +33,8 @@ def load_countries_time_series(filename: str, countries_path: str) -> dict:
     countries = load_countries_names(countries_path)
     countries_codes = load_countries_codes(countries_path)
     for index, country in enumerate(countries):
-        countries_dict[countries_codes[index]] = data[data['Country/Region'] == country].values.tolist()[0][4:]
+        if country in unusual_countries:
+            countries_dict[countries_codes[index]] = data[data['Country/Region'] == country].sum().values.tolist()[3:]
+        else:
+            countries_dict[countries_codes[index]] = data[data['Country/Region'] == country].values.tolist()[0][4:]
     return countries_dict

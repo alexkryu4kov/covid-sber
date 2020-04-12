@@ -27,8 +27,8 @@ def save_predicts_to_csv(
         data = pd.DataFrame()
         data['date'] = dates
         data['country'] = [code]*271
-        data['prediction_confirmed'] = [0]*7+cases_predicts[code]
-        data['prediction_deaths'] = [0]*7 + death_predicts[code]
+        data['prediction_confirmed'] = [0]*6+cases_predicts[code]
+        data['prediction_deaths'] = [0]*6 + death_predicts[code]
         all_data.append(data)
 
     full_data = pd.concat(all_data)
