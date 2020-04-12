@@ -21,7 +21,7 @@ def predict(model, order: tuple, time_series: list) -> list:
     start_step = len(time_series)
     end_step = start_step + 264  # количество дней которое нужно запредиктить (с 12 апреля)
     model = model(time_series, order=order).fit(disp=False)
-    predicted = model.predict(start_step, end_step)[1:]
+    predicted = model.predict(start_step, end_step)
 
     return [int(round(elem)) for elem in predicted]
 
