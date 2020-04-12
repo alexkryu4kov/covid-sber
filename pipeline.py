@@ -1,5 +1,5 @@
-FILENAME = 'test'
-model = ''
+FILENAME = 'test'  # путь до данных
+model = ''  # модель загружается откуда-то или импортируется класс с моделью
 
 country_predicts = {}
 
@@ -22,7 +22,6 @@ def predict(model, time_series: list) -> list:
 countries_time_series = load_countries_time_series(FILENAME)
 
 for country, time_series in countries_time_series.items():
-    country_predicts[country] = predict(model, time_series)
-
+    country_predicts[country] = predict(model, time_series)  # делаем предикт для каждой страны
 
 save_predicts_to_csv(country_predicts)
