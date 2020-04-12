@@ -1,14 +1,11 @@
-FILENAME = 'test'  # путь до данных
+from extractor.load import load_countries_time_series
+
+TIME_SERIES_DATA = '../data/time_series_covid19_confirmed_global.csv'
+COUNTRIES_DATA = '../data/countries.csv'
+
 model = ''  # модель загружается откуда-то или импортируется класс с моделью
 
 country_predicts = {}
-
-
-def load_countries_time_series(filename: str) -> dict:
-    """Принимает на вход путь до csv файла.
-
-    Парсит его в словарь вида {'RUS': [1,2,3]}
-    """
 
 
 def save_predicts_to_csv(country_predicts: dict) -> None:
@@ -19,7 +16,7 @@ def predict(model, time_series: list) -> list:
     """Принимает на вход список с данными и возвращает список предиктов."""
 
 
-countries_time_series = load_countries_time_series(FILENAME)
+countries_time_series = load_countries_time_series(TIME_SERIES_DATA, COUNTRIES_DATA)
 
 for country, time_series in countries_time_series.items():
     country_predicts[country] = predict(model, time_series)  # делаем предикт для каждой страны
