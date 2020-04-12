@@ -23,7 +23,7 @@ def save_predicts_to_csv(
     dates = iterate_over_dates(start_date, end_date)
     data = pd.DataFrame()
     data['date'] = dates
-    data['country'] = ['AFG']*3
+    data['country'] = ['AFG']*271
     data['prediction_confirmed'] = cases_predicts['AFG']
     data['prediction_deaths'] = death_predicts['AFG']
 

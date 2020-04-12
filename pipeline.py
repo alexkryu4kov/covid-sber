@@ -7,7 +7,7 @@ from extractor.save import save_predicts_to_csv
 
 
 START_DATE = date(2020, 4, 5)
-END_DATE = date(2020, 4, 7)
+END_DATE = date(2020, 12, 31)
 
 model = ''  # модель загружается откуда-то или импортируется класс с моделью
 
@@ -18,7 +18,7 @@ death_predicts = {}
 def predict(model, time_series: list) -> list:
     """Принимает на вход список с данными и возвращает список предиктов."""
 
-    return [random()]*3
+    return [random()]*271
 
 
 confirmed_time_series = load_countries_time_series(TIME_SERIES_CONFIRMED_DATA, COUNTRIES_DATA)
