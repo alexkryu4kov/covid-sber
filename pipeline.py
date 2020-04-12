@@ -1,7 +1,5 @@
+from config import COUNTRIES_DATA, TIME_SERIES_DATA
 from extractor.load import load_countries_time_series
-
-TIME_SERIES_DATA = '../data/time_series_covid19_confirmed_global.csv'
-COUNTRIES_DATA = '../data/countries.csv'
 
 model = ''  # модель загружается откуда-то или импортируется класс с моделью
 
