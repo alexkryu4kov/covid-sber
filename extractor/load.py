@@ -1,14 +1,6 @@
 import pandas as pd
 
-UNUSUAL_COUNTRIES = [
-    'Australia',
-    'Canada',
-    'China',
-    'Denmark',
-    'France',
-    'Netherlands',
-    'United Kingdom',
-]
+from config.constants import COUNTRIES_WITH_COLONIES
 
 
 class Loader:
@@ -32,7 +24,7 @@ class Loader:
         data = pd.read_csv(filename)
         countries = self.load_countries_names()
         for index, country in enumerate(countries):
-            if country in UNUSUAL_COUNTRIES:
+            if country in COUNTRIES_WITH_COLONIES:
                 countries_dict[countries_codes[index]] = data[data['Country/Region'] == country].sum().values.tolist()[3:]
             else:
                 countries_dict[countries_codes[index]] = data[data['Country/Region'] == country].values.tolist()[0][4:]
