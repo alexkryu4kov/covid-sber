@@ -1,3 +1,5 @@
+from config import ACTUAL_AMOUNT_OF_PREDICTIONS
+
 import statsmodels.api as sm
 
 
@@ -7,7 +9,7 @@ class Model:
 
     def predict(self, time_series, order):
         start_step = len(time_series)
-        end_step = start_step + 262  # количество дней которое нужно запредиктить (с 12 апреля)
+        end_step = start_step + ACTUAL_AMOUNT_OF_PREDICTIONS
         model = self.model(time_series, order=order).fit(disp=False)
         predicted = model.predict(start_step, end_step)
 

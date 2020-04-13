@@ -1,7 +1,9 @@
-from datetime import date
-from dateutil.rrule import rrule, DAILY
+from config import ACTUAL_AMOUNT_OF_PREDICTIONS, TOTAL_AMOUNT_OF_PREDICTIONS
 
 import pandas as pd
+from dateutil.rrule import rrule, DAILY
+
+NUMBER_OF_ZERO_PREDICTIONS = TOTAL_AMOUNT_OF_PREDICTIONS - ACTUAL_AMOUNT_OF_PREDICTIONS - 1
 
 
 class Saver:
@@ -29,9 +31,9 @@ class Saver:
         for code in countries_codes:
             data = pd.DataFrame()
             data['date'] = dates
-            data['country'] = [code] * 271
-            data['prediction_confirmed'] = [0] * 8 + cases_predicts[code]
-            data['prediction_deaths'] = [0] * 8 + death_predicts[code]
+            data['country'] = [code] * TOTAL_AMOUNT_OF_PREDICTIONS
+            data['prediction_confirmed'] = [0] * NUMBER_OF_ZERO_PREDICTIONS + cases_predicts[code]
+            data['prediction_deaths'] = [0] * NUMBER_OF_ZERO_PREDICTIONS + death_predicts[code]
             all_data.append(data)
 
         full_data = pd.concat(all_data)
