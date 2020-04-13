@@ -1,4 +1,4 @@
-from config import ACTUAL_AMOUNT_OF_PREDICTIONS, TOTAL_AMOUNT_OF_PREDICTIONS
+from config.constants import ACTUAL_AMOUNT_OF_PREDICTIONS, TOTAL_AMOUNT_OF_PREDICTIONS
 
 import pandas as pd
 from dateutil.rrule import rrule, DAILY

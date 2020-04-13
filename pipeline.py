@@ -1,9 +1,9 @@
 from datetime import date
 
-from config import COUNTRIES_DATA, SUBMISSION_PATH, TIME_SERIES_CONFIRMED_DATA, TIME_SERIES_DEATHS_DATA
+from config.path import COUNTRIES_DATA, SUBMISSION_PATH, TIME_SERIES_CONFIRMED_DATA, TIME_SERIES_DEATHS_DATA
 from extractor.load import Loader
 from extractor.save import Saver
-from model import Model
+from model.sarimax_model import Model
 
 
 START_DATE = date(2020, 4, 5)

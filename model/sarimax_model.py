@@ -1,4 +1,4 @@
-from config import ACTUAL_AMOUNT_OF_PREDICTIONS
+from config.constants import ACTUAL_AMOUNT_OF_PREDICTIONS
 
 import statsmodels.api as sm
 
