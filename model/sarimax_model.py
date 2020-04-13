@@ -3,7 +3,7 @@ from config.constants import ACTUAL_AMOUNT_OF_PREDICTIONS
 import statsmodels.api as sm
 
 
-class Model:
+class SarimaxModel:
     def __init__(self):
         self.model = sm.tsa.statespace.SARIMAX
 

@@ -3,7 +3,7 @@ from datetime import date
 from config.path import COUNTRIES_DATA, SUBMISSION_PATH, TIME_SERIES_CONFIRMED_DATA, TIME_SERIES_DEATHS_DATA
 from extractor.load import Loader
 from extractor.save import Saver
-from model.sarimax_model import Model
+from model.sarimax_model import SarimaxModel
 
 
 START_DATE = date(2020, 4, 5)
@@ -23,16 +23,10 @@ class Predictor:
         self.confirmed_data = None
         self.death_data = None
 
-    def load_data(self):
+    def load_data(self, confirmed_data, deaths_data):
         self.countries_codes = self.loader.load_countries_codes()
-        self.confirmed_data = self.loader.load_countries_time_series(
-            TIME_SERIES_CONFIRMED_DATA,
-            self.countries_codes
-        )
-        self.death_data = self.loader.load_countries_time_series(
-            TIME_SERIES_DEATHS_DATA,
-            self.countries_codes
-        )
+        self.confirmed_data = self.loader.load_countries_time_series(confirmed_data, self.countries_codes)
+        self.death_data = self.loader.load_countries_time_series(deaths_data, self.countries_codes)
 
     def predict_confirmed(self):
         cases_predicts = {}
@@ -44,29 +38,29 @@ class Predictor:
         death_predicts = {}
         for country, time_series in self.death_data.items():
             try:
-                death_predicts[country] = self.model.predict(time_series, order_death)  # делаем предикт для каждой страны
+                death_predicts[country] = self.model.predict(time_series, order_death)
             except Exception as exc:
                 death_predicts[country] = self.model.predict(time_series, order_default)
         return death_predicts
 
-    def save_predicts(self, cases_predicts, death_predicts):
+    def save_predicts(self, cases_predicts, death_predicts, submission_path):
         self.saver.predicts_to_csv(
             cases_predicts,
             death_predicts,
             self.countries_codes,
-            SUBMISSION_PATH,
+            submission_path,
         )
 
-    def facade(self):
-        self.load_data()
+    def facade(self, confirmed_data, deaths_data, submission_path):
+        self.load_data(confirmed_data, deaths_data)
         cases_predicts = self.predict_confirmed()
         death_predicts = self.predict_deaths()
-        self.save_predicts(cases_predicts, death_predicts)
+        self.save_predicts(cases_predicts, death_predicts, submission_path)
 
 
 loader = Loader(COUNTRIES_DATA)
 saver = Saver(START_DATE, END_DATE)
-model = Model()
+model = SarimaxModel()
 
 predictor = Predictor(loader, saver, model)
-predictor.facade()
+predictor.facade(TIME_SERIES_CONFIRMED_DATA, TIME_SERIES_DEATHS_DATA, SUBMISSION_PATH)
