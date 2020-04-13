@@ -1,43 +1,72 @@
 from datetime import date
 
 from config import COUNTRIES_DATA, SUBMISSION_PATH, TIME_SERIES_CONFIRMED_DATA, TIME_SERIES_DEATHS_DATA
-from extractor.load import load_countries_codes, load_countries_time_series
-from extractor.save import save_predicts_to_csv
-import statsmodels.api as sm
+from extractor.load import Loader
+from extractor.save import Saver
+from model import Model
+
 
 START_DATE = date(2020, 4, 5)
 END_DATE = date(2020, 12, 31)
 
-model = sm.tsa.statespace.SARIMAX
 order = (1, 2, 1)  # параметры для confirmed
-
 order_death = (3, 2, 2)  # параметры для deaths
-
-cases_predicts = {}
-death_predicts = {}
+order_default = (1, 1, 1)
 
 
-def predict(model, order: tuple, time_series: list) -> list:
-    start_step = len(time_series)
-    end_step = start_step + 262  # количество дней которое нужно запредиктить (с 12 апреля)
-    model = model(time_series, order=order).fit(disp=False)
-    predicted = model.predict(start_step, end_step)
+class Predictor:
+    def __init__(self, loader, saver, model):
+        self.loader = loader
+        self.saver = saver
+        self.model = model
+        self.countries_codes = None
+        self.confirmed_data = None
+        self.death_data = None
 
-    return [int(round(elem)) for elem in predicted]
+    def load_data(self):
+        self.countries_codes = self.loader.load_countries_codes()
+        self.confirmed_data = self.loader.load_countries_time_series(
+            TIME_SERIES_CONFIRMED_DATA,
+            self.countries_codes
+        )
+        self.death_data = self.loader.load_countries_time_series(
+            TIME_SERIES_DEATHS_DATA,
+            self.countries_codes
+        )
+
+    def predict_confirmed(self):
+        cases_predicts = {}
+        for country, time_series in self.confirmed_data.items():
+            cases_predicts[country] = self.model.predict(time_series, order)
+        return cases_predicts
+
+    def predict_deaths(self):
+        death_predicts = {}
+        for country, time_series in self.death_data.items():
+            try:
+                death_predicts[country] = self.model.predict(time_series, order_death)  # делаем предикт для каждой страны
+            except Exception as exc:
+                death_predicts[country] = self.model.predict(time_series, order_default)
+        return death_predicts
+
+    def save_predicts(self, cases_predicts, death_predicts):
+        self.saver.predicts_to_csv(
+            cases_predicts,
+            death_predicts,
+            self.countries_codes,
+            SUBMISSION_PATH,
+        )
+
+    def facade(self):
+        self.load_data()
+        cases_predicts = self.predict_confirmed()
+        death_predicts = self.predict_deaths()
+        self.save_predicts(cases_predicts, death_predicts)
 
 
-confirmed_time_series = load_countries_time_series(TIME_SERIES_CONFIRMED_DATA, COUNTRIES_DATA)
-death_time_series = load_countries_time_series(TIME_SERIES_DEATHS_DATA, COUNTRIES_DATA)
+loader = Loader(COUNTRIES_DATA)
+saver = Saver(START_DATE, END_DATE)
+model = Model()
 
-for country, time_series in confirmed_time_series.items():
-    cases_predicts[country] = predict(model, order, time_series)  # делаем предикт для каждой страны
-
-for country, time_series in death_time_series.items():
-    try:
-        death_predicts[country] = predict(model, order_death, time_series)  # делаем предикт для каждой страны
-    except Exception as exc:
-        death_predicts[country] = predict(model, (1, 1, 1), time_series)
-
-countries_codes = load_countries_codes(COUNTRIES_DATA)
-
-save_predicts_to_csv(cases_predicts, death_predicts, countries_codes, SUBMISSION_PATH, START_DATE, END_DATE)
+predictor = Predictor(loader, saver, model)
+predictor.facade()

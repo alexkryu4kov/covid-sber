@@ -4,33 +4,36 @@ from dateutil.rrule import rrule, DAILY
 import pandas as pd
 
 
-def iterate_over_dates(start: date, end: date) -> list:
-    dates = []
-    for dt in rrule(DAILY, dtstart=start, until=end):
-        dates.append(dt.strftime("%Y-%m-%d"))
-    return dates
+class Saver:
+    def __init__(self, start_date, end_date):
+        self.start_date = start_date
+        self.end_date = end_date
 
+    def iterate_over_dates(self) -> list:
+        dates = []
+        for dt in rrule(DAILY, dtstart=self.start_date, until=self.end_date):
+            dates.append(dt.strftime("%Y-%m-%d"))
+        return dates
 
-def save_predicts_to_csv(
-    cases_predicts: dict,
-    death_predicts: dict,
-    countries_codes: list,
-    path_to_save: str,
-    start_date: date,
-    end_date: date
-) -> None:
-    """Берет словарь вида {'RUS': [1,2,3]} и сохраняет в нужном формате в csv."""
+    def predicts_to_csv(
+            self,
+            cases_predicts: dict,
+            death_predicts: dict,
+            countries_codes: list,
+            path_to_save: str,
+    ) -> None:
+        """Берет словарь вида {'RUS': [1,2,3]} и сохраняет в нужном формате в csv."""
 
-    dates = iterate_over_dates(start_date, end_date)
-    all_data = []
-    for code in countries_codes:
-        data = pd.DataFrame()
-        data['date'] = dates
-        data['country'] = [code]*271
-        data['prediction_confirmed'] = [0]*8+cases_predicts[code]
-        data['prediction_deaths'] = [0]*8 + death_predicts[code]
-        all_data.append(data)
+        dates = self.iterate_over_dates()
+        all_data = []
+        for code in countries_codes:
+            data = pd.DataFrame()
+            data['date'] = dates
+            data['country'] = [code] * 271
+            data['prediction_confirmed'] = [0] * 8 + cases_predicts[code]
+            data['prediction_deaths'] = [0] * 8 + death_predicts[code]
+            all_data.append(data)
 
-    full_data = pd.concat(all_data)
+        full_data = pd.concat(all_data)
 
-    full_data.to_csv(path_to_save, index=False)
+        full_data.to_csv(path_to_save, index=False)
