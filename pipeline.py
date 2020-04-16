@@ -1,5 +1,6 @@
 from datetime import date
 
+from config.constants import ACTUAL_AMOUNT_OF_PREDICTIONS
 from config.path import COUNTRIES_DATA, SUBMISSION_PATH, TIME_SERIES_CONFIRMED_DATA, TIME_SERIES_DEATHS_DATA
 from extractor.load import Loader
 from extractor.save import Saver
@@ -31,16 +32,28 @@ class Predictor:
     def predict_confirmed(self):
         cases_predicts = {}
         for country, time_series in self.confirmed_data.items():
-            cases_predicts[country] = self.model.predict(time_series, order)
+            cases_predicts[country] = self.model.predict(
+                time_series,
+                order,
+                ACTUAL_AMOUNT_OF_PREDICTIONS
+            )
         return cases_predicts
 
     def predict_deaths(self):
         death_predicts = {}
         for country, time_series in self.death_data.items():
             try:
-                death_predicts[country] = self.model.predict(time_series, order_death)
+                death_predicts[country] = self.model.predict(
+                    time_series,
+                    order_death,
+                    ACTUAL_AMOUNT_OF_PREDICTIONS
+                )
             except Exception as exc:
-                death_predicts[country] = self.model.predict(time_series, order_default)
+                death_predicts[country] = self.model.predict(
+                    time_series,
+                    order_default,
+                    ACTUAL_AMOUNT_OF_PREDICTIONS
+                )
         return death_predicts
 
     def save_predicts(self, cases_predicts, death_predicts, submission_path):
