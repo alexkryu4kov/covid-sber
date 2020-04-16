@@ -9,8 +9,10 @@ order = (1, 2, 1)
 
 
 def count_MALE(real, predict):
-    return sum(abs((log10(real[i] + 1) / (predict[i] + 1))) + abs(log10((real[i] + 1) / (predict[i] + 1)))
-               for i in range(9)) / 9
+    return sum(
+        abs((log10(real[i] + 1) / (predict[i] + 1))) + abs(log10((real[i] + 1) / (predict[i] + 1)))
+        for i in range(9)
+    ) / 9
 
 
 loader = Loader(COUNTRIES_DATA)
