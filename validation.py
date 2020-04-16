@@ -38,4 +38,4 @@ for country, time_series in confirmed_time_series.items():
     except Exception as exc:
         print(exc)
 
-print(metrics)
+print(sum(metrics)/len(countries_codes))
