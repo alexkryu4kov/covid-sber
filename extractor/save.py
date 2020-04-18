@@ -54,7 +54,7 @@ class Saver(AbstractSaver):
             for code in cases_predicts[i].keys():
                 data = pd.DataFrame()
                 data['date'] = dates
-                data['country'] = [code] * TOTAL_AMOUNT_OF_PREDICTIONS
+                data['region'] = [code] * TOTAL_AMOUNT_OF_PREDICTIONS
                 data['prediction_confirmed'] = [0] * NUMBER_OF_ZERO_PREDICTIONS + cases_predicts[i][code]
                 data['prediction_deaths'] = [0] * NUMBER_OF_ZERO_PREDICTIONS + death_predicts[i][code]
                 iteration_data.append(data)

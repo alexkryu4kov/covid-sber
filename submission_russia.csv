@@ -1,4 +1,4 @@
-date,country,prediction_confirmed,prediction_deaths
+date,region,prediction_confirmed,prediction_deaths
 2020-04-05,AFG,0,0
 2020-04-06,AFG,0,0
 2020-04-07,AFG,0,0
