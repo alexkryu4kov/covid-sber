@@ -1,41 +1,37 @@
 from numpy import log10
+from numpy.linalg import LinAlgError
 
-from config.path import COUNTRIES_DATA, TIME_SERIES_CONFIRMED_DATA
-
-from extractor.load import Loader
+from config.path import RUSSIAN_REGIONS_DATA, TIME_SERIES_CONFIRMED_DATA_RUSSIA
+from extractor.load import RegionsLoader
 from model.sarimax_model import SarimaxModel
 
-order = (1, 2, 1)
+tests_order = [(1, 2, 1)]
 
 
 def count_MALE(real, predict):
     return sum(
         abs((log10(real[i] + 1) / (predict[i] + 1))) + abs(log10((real[i] + 1) / (predict[i] + 1)))
-        for i in range(9)
-    ) / 9
+        for i in range(5)
+    ) / 5
 
 
-loader = Loader(COUNTRIES_DATA)
-model = SarimaxModel()
+regions_loader = RegionsLoader(RUSSIAN_REGIONS_DATA)
+sarimax_model = SarimaxModel()
 
-countries_codes = loader.load_countries_codes()
-
-confirmed_time_series = loader.load_countries_time_series(
-    TIME_SERIES_CONFIRMED_DATA,
-    countries_codes,
-)
+regions_data = regions_loader.load_time_series(TIME_SERIES_CONFIRMED_DATA_RUSSIA)
 
 metrics = []
 
-for country, time_series in confirmed_time_series.items():
-    try:
-        metric = count_MALE(
-            time_series[68:78],  # реальные данные
-            model.predict(time_series[:68], order, 9)  # предикт модели
-        )
-        metrics.append(metric)
-        print(country, metric)
-    except Exception as exc:
-        print(exc)
+for order in tests_order:
+    for country, series in regions_data.items():
+        try:
+            metric = count_MALE(
+                series[75:80],  # реальные данные
+                sarimax_model.predict(series[:75], order, 5)  # предикт модели
+            )
+            metrics.append(metric)
+            print(country, metric)
+        except LinAlgError:
+            pass
 
-print(sum(metrics)/len(countries_codes))
+    print(order, ':', sum(metrics) / 85)
