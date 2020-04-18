@@ -1,17 +1,15 @@
 import pandas as pd
 
-from config.constants import COUNTRIES_WITH_COLONIES
-
 
 class Loader:
     def __init__(self, countries_path):
         self.countries = pd.read_csv(countries_path)
 
-    def load_countries_codes(self) -> list:
-        return list(self.countries['iso_alpha3'])
+    def load_regions_codes(self) -> list:
+        return list(self.countries['iso_code'])
 
-    def load_countries_names(self) -> list:
-        return list(self.countries['ccse_name'])
+    def load_regions_names(self) -> list:
+        return list(self.countries['csse_province_state'])
 
     def load_countries_time_series(self, filename: str, countries_codes) -> dict:
         """Принимает на вход путь до csv файла.
@@ -22,10 +20,8 @@ class Loader:
         countries_dict = {}
 
         data = pd.read_csv(filename)
-        countries = self.load_countries_names()
+        countries = self.load_regions_names()
+        column_russia = 'Province_State'
         for index, country in enumerate(countries):
-            if country in COUNTRIES_WITH_COLONIES:
-                countries_dict[countries_codes[index]] = data[data['Country/Region'] == country].sum().values.tolist()[3:]
-            else:
-                countries_dict[countries_codes[index]] = data[data['Country/Region'] == country].values.tolist()[0][4:]
+            countries_dict[countries_codes[index]] = data[data[column_russia] == country].values.tolist()[0][11:]
         return countries_dict

@@ -25,7 +25,6 @@ class Saver:
             path_to_save: str,
     ) -> None:
         """Берет словарь вида {'RUS': [1,2,3]} и сохраняет в нужном формате в csv."""
-
         dates = self.iterate_over_dates()
         all_data = []
         for code in countries_codes:
