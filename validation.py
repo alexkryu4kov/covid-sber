@@ -1,11 +1,11 @@
-from numpy import log10
+from numpy import isnan, log10
 from numpy.linalg import LinAlgError
 
 from config.path import RUSSIAN_REGIONS_DATA, TIME_SERIES_CONFIRMED_DATA_RUSSIA
 from extractor.load import RegionsLoader
 from model.sarimax_model import SarimaxModel
 
-tests_order = [(1, 2, 1)]
+tests_order = [(3, 2, 2)]
 
 
 def count_MALE(real, predict):
@@ -26,10 +26,13 @@ for order in tests_order:
     for country, series in regions_data.items():
         try:
             metric = count_MALE(
-                series[75:80],  # реальные данные
-                sarimax_model.predict(series[:75], order, 5)  # предикт модели
+                series[81:86],  # реальные данные
+                sarimax_model.predict(series[:81], order, 5)  # предикт модели
             )
-            metrics.append(metric)
+            if not isnan(metric):
+                metrics.append(metric)
+            else:
+                metrics.append(0.1)
             print(country, metric)
         except LinAlgError:
             pass

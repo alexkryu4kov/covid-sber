@@ -19,7 +19,7 @@ from model.sarimax_model import SarimaxModel
 START_DATE = date(2020, 4, 5)
 END_DATE = date(2020, 12, 31)
 
-order = (1, 2, 1)  # параметры для confirmed
+order = (3, 3, 2)  # параметры для confirmed
 order_default = (1, 1, 1)
 
 
