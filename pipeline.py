@@ -25,16 +25,16 @@ order_default = (1, 1, 1)
 
 def predict_time_series(time_series, model):
     predicts = {}
-    for country, time_series in time_series.items():
+    for country, series in time_series.items():
         try:
             predicts[country] = model.predict(
-                time_series,
+                series,
                 order,
                 ACTUAL_AMOUNT_OF_PREDICTIONS,
             )
         except LinAlgError:
             predicts[country] = model.predict(
-                time_series,
+                series,
                 order_default,
                 ACTUAL_AMOUNT_OF_PREDICTIONS,
             )
