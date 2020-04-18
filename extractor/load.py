@@ -47,8 +47,8 @@ class RegionsLoader(Loader):
 
         time_series = pd.read_csv(time_series_path)
         codes = list(self.info['iso_code'])
-        countries = list(self.info['csse_province_state'])
+        regions = list(self.info['csse_province_state'])
 
-        for index, country in enumerate(countries):
-            regions_dict[codes[index]] = time_series[time_series['Province_State'] == country].values.tolist()[0][11:]
+        for index, region in enumerate(regions):
+            regions_dict[codes[index]] = time_series[time_series['Province_State'] == region].values.tolist()[0][11:]
         return regions_dict
