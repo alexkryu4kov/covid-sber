@@ -19,25 +19,28 @@ from model.sarimax_model import SarimaxModel
 START_DATE = date(2020, 4, 5)
 END_DATE = date(2020, 12, 31)
 
-order = (3, 3, 2)  # параметры для confirmed
+orders = [
+    (1, 3, 2),
+    (4, 3, 1),
+    (4, 3, 2),
+]
 order_default = (1, 1, 1)
 
 
-def predict_time_series(time_series, model):
+def get_mean_of_predicts(series, model, orders, amount):
+    predicts = []
+    for order in orders:
+        try:
+            predicts.append(model.predict(series, order, amount))
+        except LinAlgError:
+            predicts.append(model.predict(series, order_default, amount))
+    return [round(sum(item) / len(item)) for item in zip(*predicts)]
+
+
+def predict_time_series(time_series, model, orders, amount):
     predicts = {}
     for country, series in time_series.items():
-        try:
-            predicts[country] = model.predict(
-                series,
-                order,
-                ACTUAL_AMOUNT_OF_PREDICTIONS,
-            )
-        except LinAlgError:
-            predicts[country] = model.predict(
-                series,
-                order_default,
-                ACTUAL_AMOUNT_OF_PREDICTIONS,
-            )
+        predicts[country] = get_mean_of_predicts(series, model, orders, amount)
     return predicts
 
 
@@ -53,13 +56,13 @@ countries_deaths_data = countries_loader.load_time_series(TIME_SERIES_DEATHS_DAT
 regions_deaths_data = regions_loader.load_time_series(TIME_SERIES_DEATHS_DATA_RUSSIA)
 
 cases_predicts = [
-    predict_time_series(countries_data, sarimax_model),
-    predict_time_series(regions_data, sarimax_model)
+    predict_time_series(countries_data, sarimax_model, orders, ACTUAL_AMOUNT_OF_PREDICTIONS),
+    predict_time_series(regions_data, sarimax_model, orders, ACTUAL_AMOUNT_OF_PREDICTIONS)
 ]
 
 deaths_predicts = [
-    predict_time_series(countries_deaths_data, sarimax_model),
-    predict_time_series(regions_deaths_data, sarimax_model)
+    predict_time_series(countries_deaths_data, sarimax_model, orders, ACTUAL_AMOUNT_OF_PREDICTIONS),
+    predict_time_series(regions_deaths_data, sarimax_model, orders, ACTUAL_AMOUNT_OF_PREDICTIONS)
 ]
 
 saver.save(SUBMISSION_PATH, cases_predicts, deaths_predicts, START_DATE, END_DATE)
