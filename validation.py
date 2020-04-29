@@ -17,7 +17,7 @@ orders = [
 
 def count_MALE(real, predict):
     return sum(
-        abs((log10(real[i] + 1) / (predict[i] + 1))) + abs(log10((real[i] + 1) / (predict[i] + 1)))
+        abs(log10((real[i] + 1) / (predict[i] + 1)))
         for i in range(5)
     ) / 5
 
