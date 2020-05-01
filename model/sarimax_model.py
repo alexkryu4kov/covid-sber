@@ -26,7 +26,7 @@ class SarimaxModel(Model):
     def predict(
         self,
         time_series: List[int],
-        order: Tuple[int],
+        order: Tuple[int, int, int],
         amount_of_predictions: int
     ) -> List[int]:
         """
