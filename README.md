@@ -1,5 +1,5 @@
 # covid-sber
-Решение соревнования от Сбера про COVID-19
+Решение соревнования от Сбера про COVID-19  https://ods.ai/competitions/sberbank-covid19-forecast
 
 Запускать нужно файл *pipeline.py*
 
